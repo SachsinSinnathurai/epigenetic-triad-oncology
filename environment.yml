@@ -1,0 +1,23 @@
+name: polypharm_resistance
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy>=1.24.0
+  - pandas>=2.0.0
+  - scipy>=1.10.0
+  - matplotlib>=3.7.0
+  - seaborn>=0.12.0
+  - lifelines>=0.27.0
+  - statsmodels>=0.14.0
+  - openpyxl>=3.1.0
+  - psutil>=5.9.0
+  - reportlab>=3.6.0
+  - r-base>=4.2.0
+  - r-survival>=3.5
+  - r-survminer>=0.4.9
+  - pip:
+    - requests>=2.31.0
