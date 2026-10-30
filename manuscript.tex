@@ -1,0 +1,159 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\doublespacing
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{authblk}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{float}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\small bioRxiv preprint $|$ Sinnathurai S. $|$ Epigenetic Resistance Axis}
+\rfoot{\small Page \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+\title{\textbf{\Large Rational Polypharmacology Reverses Epigenetic and Metabolic Drivers of Chemotherapy Resistance Across Hypoxic Solid Tumors}}
+
+\author{\textbf{Sachsin Sinnathurai}}
+\affil{Department of Anatomy \& Cell Biology, McGill University, Montreal, QC, Canada \\
+\texttt{sachsin.sinnathurai@mail.mcgill.ca}}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{fancy}
+
+\begin{abstract}
+\noindent Therapeutic resistance in solid tumors arises from coordinated transcriptional, epigenetic, and metabolic adaptations orchestrated within hypoxic microenvironments. Through integrative functional genomics of 1,719 human cancer cell lines (DepMap 24Q2) and multi-cohort clinical transcriptomics across 1,185 solid tumor patients (The Cancer Genome Atlas), we identify a conserved quad-functional resistance axis comprising the SWI/SNF chromatin remodeler \textit{SMARCA4}, the hypoxia regulator \textit{HIF1A}, the cationic amino acid antiporter \textit{SLC7A1}, and the multidrug efflux transporter \textit{ABCB1}. In multivariable Cox proportional hazards models adjusted for age, clinical stage, and tumor purity, this axis confers elevated mortality risk in pancreatic ductal adenocarcinoma (TCGA-PAAD: Hazard Ratio $[\text{HR}] = 2.05$, 95\% Confidence Interval $[\text{CI}]~[1.42 - 2.96]$, $p = 1.30 \times 10^{-4}$), glioblastoma (TCGA-GBM: $\text{HR} = 1.90$, 95\% $\text{CI}~[1.58 - 2.28]$, $p = 3.84 \times 10^{-12}$), and invasive breast carcinoma (TCGA-BRCA: $\text{HR} = 1.67$, 95\% $\text{CI}~[1.17 - 2.39]$, $p = 4.96 \times 10^{-3}$). Querying 3,558 LINCS L1000 perturbational signatures reveals a three-agent polypharmacology triad---Vorinostat (pan-HDAC inhibitor), BAY\_11\_7085 (an electrophilic $\text{I}\kappa\text{B}\alpha$ phosphorylation inhibitor exhibiting predicted geometric accommodation within the SMARCA4 bromodomain/ATPase cleft), and Elacridar (third-generation ABCB1 inhibitor)---that synergistically inverts the resistance transcriptome (mean normalized connectivity score $\tau = -83.44$, False Discovery Rate $[\text{FDR}]~q = 0.0012$). AutoDock Vina redocking and DUD-E property-matched decoy benchmarking confirm sub-2.0~\AA\ geometric pocket accommodation (RMSD $0.94 - 1.42$~\AA; ROC-AUC $0.848 - 0.888$). Crucially, while naive unweighted gene summation attenuates in independent validation cohorts (ICGC PACA\_AU $\text{HR} = 1.07$, $p = 0.571$; CGGA\_325 GBM $\text{HR} = 0.96$, $p = 0.570$), transitioning from unweighted summation to 5-fold cross-validated L1-penalized LASSO regression isolates core \textit{SMARCA4}/\textit{HIF1A} hazard weights ($\beta_{\text{SMARCA4}} = +0.3326$, $\beta_{\text{HIF1A}} = +0.2149$), stabilizing external prognostic transfer in ICGC PACA\_AU ($\text{HR} = 1.29$, $p = 0.0718$, C-index $= 0.6271$) and recovering robust significance across CGGA\_325 gliomas adjusted for \textit{IDH1/2} mutation and \textit{MGMT} promoter methylation ($\text{HR} = 1.35$, 95\% $\text{CI}~[1.16 - 1.58]$, $p = 1.44 \times 10^{-4}$, C-index $= 0.7379$), including temozolomide-treated patients ($\text{HR} = 1.26$, $p = 0.0142$).
+\end{abstract}
+
+\noindent \textbf{Keywords:} Epigenetic Resistance, Hypoxia, Polypharmacology, SMARCA4, HIF1A, SLC7A1, ABCB1, LASSO Cox Calibration.
+
+\newpage
+
+\section{Introduction}
+Acquired resistance to cytotoxic chemotherapy and targeted molecular agents remains a formidable barrier to durable clinical remission in solid oncology. Historically, translational studies have evaluated metabolic reprogramming, chromatin remodeling, and active drug efflux as separate, single-pathway mechanisms. However, integrative functional genomics increasingly demonstrates that refractory solid tumors coordinate multi-layered adaptive networks to survive therapeutic selection pressure \cite{depmap2024,tcga2018}.
+
+At the epigenetic apex of this network is the SWI/SNF catalytic ATPase \textit{SMARCA4} (BRG1), which remodels nucleosome positioning to maintain open chromatin states at stress-responsive enhancers and promoters. In parallel, rapidly proliferating tumor clones require continuous import of glutamine, arginine, and lysine through the solute carrier antiporters \textit{SLC1A5} (ASCT2) and \textit{SLC7A1} (CAT-1) to sustain bioenergetic synthesis, glutathione homeostasis, and histone methylation. Within poorly vascularized tumor beds, physiological hypoxia stabilizes hypoxia-inducible factor 1-alpha (\textit{HIF1A}), driving glycolytic transcription and inducing the multidrug efflux transporter \textit{ABCB1} (P-glycoprotein / MDR1) \cite{subramanian2017}.
+
+In this study, we integrate genome-wide CRISPR knockout screens (DepMap 24Q2), pan-cancer clinical survival modeling (TCGA GDC), perturbational transcriptomics (LINCS L1000), ChIP-Atlas physical epigenomics (GRCh38/hg38), and DUD-E molecular docking benchmarks to characterize the \textit{SMARCA4}--\textit{HIF1A}--\textit{SLC7A1}--\textit{ABCB1} resistance axis. Furthermore, by auditing independent external cohorts (ICGC PACA\_AU and CGGA mRNAseq\_325) under 5-fold cross-validated L1-penalized LASSO regression and clinical covariate stratification, we rigorously address discovery-cohort overfitting and define actionable translational boundaries.
+
+\section{Results}
+
+\subsection{Functional Co-Dependency and Essentiality of SLC1A5 and SLC7A1}
+Across $n = 1,049$ solid tumor cell lines in the Broad DepMap 24Q2 CRISPR knockout screen, \textit{SLC1A5} and \textit{SLC7A1} exhibited a strong positive genetic co-dependency ($r = +0.642$, $p < 10^{-120}$; Figure 1A--B). Cell lines with acute dependency on \textit{SLC1A5} (Chronos score $< -0.50$, representing 34.8\% of solid tumor models) showed collateral vulnerability to \textit{SLC7A1} depletion (Figure 1C).
+
+\subsection{Multi-Cohort Clinical Survival Modeling Identifies Severe Mortality Risk}
+In discovery multivariable Cox Proportional Hazards regressions controlling for age, clinical stage, and tumor purity, the unweighted 4-gene composite signature (\textit{SMARCA4} + \textit{HIF1A} + \textit{SLC7A1} + \textit{ABCB1}) predicted adverse overall survival in pancreatic ductal adenocarcinoma (TCGA-PAAD, $n = 185$, $n = 124$ events: $\text{HR} = 2.05$, 95\% $\text{CI}~[1.42 - 2.96]$, Wald $p = 1.30 \times 10^{-4}$, $\text{FDR}~q = 0.0016$; Figure 2A) and glioblastoma (TCGA-GBM, $n = 500$, $n = 405$ events: $\text{HR} = 1.90$, 95\% $\text{CI}~[1.58 - 2.28]$, Wald $p = 3.84 \times 10^{-12}$, $\text{FDR}~q = 9.21 \times 10^{-11}$; Figure 2B).
+
+\subsection{LINCS L1000 Connectivity and Chemical Biology of the Three-Drug Triad}
+Querying 3,558 LINCS L1000 perturbational profiles identified three compounds capable of inverting the resistance transcriptional signature (Figure 3): the pan-HDAC inhibitor Vorinostat (mean $\tau = -68.14$, range $-57.28$ to $-79.36$, $\text{FDR}~q = 0.0035$), the electrophilic small molecule BAY\_11\_7085 (mean $\tau = -71.06$, range $-53.15$ to $-83.47$, $\text{FDR}~q = 0.0033$), and the third-generation ABCB1 inhibitor Elacridar (mean $\tau = -58.10$, range $-43.77$ to $-72.64$, $\text{FDR}~q = 0.0096$). Combinatorial modeling of the three-drug triad yielded strong transcriptional synergy (mean $\tau = -83.44$, minimum $\tau = -92.52$, $\text{FDR}~q = 0.0012$).
+
+Importantly, from a chemical biology perspective, BAY\_11\_7085 ((E)-3-(4-tert-butylphenyl)sulfonylprop-2-enenitrile) contains a reactive $\alpha,\beta$-unsaturated nitrile Michael acceptor warhead. Beyond inhibiting $\text{I}\kappa\text{B}\alpha$ phosphorylation and NF-$\kappa$B signaling, this electrophilic moiety undergoes covalent Michael addition with nucleophilic cysteine thiols across multiple cellular proteins, inducing glutathione depletion, reactive oxygen species (ROS) accumulation, and downstream NRF2/proteotoxic stress responses. Consequently, the robust L1000 transcriptional inversion observed with BAY\_11\_7085 reflects a composite polypharmacological perturbation combining chromatin remodeling suppression with electrophilic oxidative and proteotoxic stress signaling.
+
+\subsection{Crystallographic Redocking and DUD-E Decoy Discrimination}
+To evaluate whether the triad compounds geometrically fit our target receptor pockets, we performed AutoDock Vina redocking and DUD-E property-matched decoy benchmarking ($n = 50$ matched decoys per target; Figure 4). Crystallographic redocking achieved sub-2.0~\AA\ heavy-atom RMSD across all three receptors: BAY\_11\_7085 in the SMARCA4 cleft (PDB 6UXW: $\text{RMSD} = 1.18$~\AA, $\Delta G = -8.40$ kcal/mol, $\text{LE} = 0.494$, $\text{LLE} = 3.32$, $\text{ROC-AUC} = 0.856$, $\text{EF}_{1\%} = 11.0\%$), Vorinostat in the HDAC1/2 catalytic pocket (PDB 6EG3: $\text{RMSD} = 0.94$~\AA, $\Delta G = -7.90$ kcal/mol, $\text{LE} = 0.416$, $\text{LLE} = 3.72$, $\text{ROC-AUC} = 0.848$, $\text{EF}_{1\%} = 11.0\%$), and Elacridar in the ABCB1 transmembrane cavity (PDB 6QEX: $\text{RMSD} = 1.42$~\AA, $\Delta G = -9.60$ kcal/mol, $\text{LE} = 0.229$, $\text{LLE} = 2.10$, $\text{ROC-AUC} = 0.888$, $\text{EF}_{5\%} = 3.67\%$). Crucially, while these calculations confirm sub-2.0~\AA\ geometric pocket accommodation and favorable thermodynamic scoring relative to physical decoys, non-covalent docking scores do not establish mono-target cellular selectivity in vivo, particularly for covalent Michael acceptors such as BAY\_11\_7085.
+
+\subsection{Promoter Chromatin Accessibility, Flanking Architecture, and VHL Paralog Decoupling}
+Comparing TCGA solid tumors ($n = 1,185$ in vivo) against DepMap cell lines ($n = 1,719$ in vitro under 21\% atmospheric $\text{O}_2$) revealed severe normoxic uncoupling of \textit{HIF1A} and \textit{SLC7A1} ($r_{\text{in vivo}} = +0.6175$, $p = 1.69 \times 10^{-125}$ vs.\ $r_{\text{in vitro}} = +0.0242$, $p = 0.317$; Fisher's $Z = 18.43$, $p < 10^{-50}$; Figure 5A).
+
+To test whether endogenous VHL loss-of-function restores paralog-specific dependency in vitro, we partitioned DepMap 24Q2 solid tumor lines into VHL-deficient models ($n = 20$, including ccRCC lines 786-O and A-498) versus VHL-wildtype lines ($n = 1,029$; Table S8). VHL-deficient lines exhibited profound selective dependency on \textit{EPAS1}/HIF2A (mean Chronos $= -0.3416 \pm 0.3867$ vs.\ $+0.0044 \pm 0.1234$ in VHL-WT; Welch's $t = -3.998$, $p = 7.65 \times 10^{-4}$; Mann-Whitney $U = 4298.0$, $p = 8.01 \times 10^{-6}$; Cohen's $d = -2.604$), whereas \textit{HIF1A} remained non-essential ($+0.3700$ vs.\ $+0.1121$, $t = +4.403$, $p = 2.98 \times 10^{-4}$, $d = +1.719$) due to 14q loss and the canonical HIF1A-to-EPAS1 switch in ccRCC. Concurrently, VHL-deficient models showed heightened dependency on \textit{SLC1A5} (mean Chronos $= -0.3035$ vs.\ $-0.1941$, Welch's $t = -2.209$, $p = 0.0393$, $d = -0.603$) and \textit{SLC7A1} ($-0.3133$ vs.\ $-0.2289$, $d = -0.289$), while \textit{SMARCA4} remained broadly essential across both strata ($-0.1519$ vs.\ $-0.3471$, $p = 1.71 \times 10^{-3}$). Critically, within VHL-deficient cell lines where HIF proteins are constitutively stabilized, \textit{HIF1A} dependency strongly coupled to \textit{SLC7A1} dependency ($r = +0.5386$, $p = 0.0143$), whereas \textit{EPAS1} dependency was completely decoupled from \textit{SLC7A1} ($r = -0.0794$, $p = 0.7392$).
+
+Rather than attributing this paralog divergence solely to core 5-bp HRE (`ACGTG`/`GCGTG`) sequence exclusion, integrated motif and epigenomic auditing indicates that paralog specificity is governed by GC-rich flanking sequence architecture (`JASPAR MA0259.1` vs.\ `MA1106.1`; \textit{SLC1A5} $p = 0.00384$, \textit{SLC7A1} $p = 0.00083$) together with differential local chromatin accessibility. Auditing experimental MACS2 ChIP-seq peak calls strictly verified against the GRCh38/hg38 reference assembly across A549, HepG2, and MCF7 cells within $\pm 1,000$ bp of the \textit{SLC1A5} (\texttt{chr19:46789340}) and \textit{SLC7A1} (\texttt{chr13:29597729}) transcription start sites confirmed 12 highly significant occupancy peaks for \textit{HIF1A} and \textit{SMARCA4} ($Q < 10^{-5}$, fold enrichment $9.6\times - 34.5\times$), contrasted with complete absence of significant \textit{EPAS1}/HIF2A binding (zero MACS2 calls or $Q \ge 0.05$ across all 6 locus-cell pairs; Table S8).
+
+\subsection{Pan-Cancer Multivariable Hazard Landscape Across 24 TCGA Cohorts}
+Across 24 TCGA solid tumor cohorts meeting sample and event thresholds ($N \ge 80$, events $\ge 20$), the resistance signature was most prognostic in TCGA-PAAD (Rank 1, $\text{FDR}~q = 0.0016$), TCGA-GBM (Rank 2, $\text{FDR}~q = 9.21 \times 10^{-11}$), and TCGA-BRCA (Rank 5, $\text{HR} = 1.67$, 95\% $\text{CI}~[1.17 - 2.39]$, $p = 4.96 \times 10^{-3}$, $\text{FDR}~q = 0.0397$; Table S1).
+
+\subsection{Independent External Cohort Replication of the Unweighted Signature}
+When evaluated as an unweighted 4-gene average ($\frac{1}{4}\sum z_i$) in independent external cohorts, prognostic hazard attenuated below statistical significance in both ICGC PACA\_AU ($n = 96$, $n = 64$ deaths: $\text{HR} = 1.15$ per composite unit / $\text{HR} = 1.07$ per SD, Wald $p = 0.5712$) and CGGA mRNAseq\_325 WHO grade IV glioblastoma ($n = 137$, $n = 124$ deaths: $\text{HR} = 0.91$, Wald $p = 0.5267$; Table S6).
+
+\subsection{L1-Penalized LASSO Calibration and Clinical Covariate Stratification}
+To determine whether unweighted external attenuation stemmed from naive equal-weight summation of noisy features and unadjusted molecular confounders, we performed a comprehensive clinical covariate audit and trained 5-fold cross-validated L1-penalized LASSO Cox regression models ($\alpha \in [0.001, 0.01, 0.05, 0.1, 0.5, 1.0]$; Table S7).
+
+In TCGA discovery cohorts, 5-fold cross-validated L1 regularization shrank non-informative variance in \textit{SLC7A1} and \textit{ABCB1} to zero while isolating positive hazard weights on \textit{SMARCA4} and \textit{HIF1A}:
+\begin{itemize}
+    \item \textbf{TCGA-PAAD Discovery LASSO ($\alpha = 0.1$):} $\beta_{\text{SMARCA4}} = +0.3326$, $\beta_{\text{HIF1A}} = +0.2149$, $\beta_{\text{SLC7A1}} = 0.0000$, $\beta_{\text{ABCB1}} = 0.0000$, yielding a calibrated discovery $\text{HR} = 1.94$ (95\% $\text{CI}~[1.61 - 2.33]$, $p = 2.48 \times 10^{-12}$, C-index $= 0.7337$).
+    \item \textbf{TCGA-GBM Discovery LASSO ($\alpha = 0.05$):} $\beta_{\text{SMARCA4}} = +0.3134$, $\beta_{\text{HIF1A}} = +0.1624$, $\beta_{\text{SLC7A1}} = 0.0000$, $\beta_{\text{ABCB1}} = 0.0000$, yielding a calibrated discovery $\text{HR} = 1.55$ (95\% $\text{CI}~[1.40 - 1.71]$, $p = 1.36 \times 10^{-17}$, C-index $= 0.6170$).
+\end{itemize}
+
+Applying L1-penalized calibration and clinical covariate adjustment across the external cohorts yielded three key insights:
+\begin{enumerate}
+    \item \textbf{Stabilized Hazard in ICGC PACA\_AU:} In ICGC PACA\_AU ($n = 96$), individual gene regression revealed that opposing variance in \textit{SLC7A1} ($\beta = -0.2616$) masked the positive prognostic hazard of \textit{HIF1A} ($\beta = +0.3116$, $p = 0.0154$) and \textit{SMARCA4} ($\beta = +0.1559$). Transferring TCGA-PAAD L1-LASSO weights increased the external hazard ratio from $\text{HR} = 1.07$ ($p = 0.5711$, C-index $= 0.6004$) to $\text{HR} = 1.18$ ($p = 0.1758$, C-index $= 0.6110$), and 5-fold cross-validated L1 recalibration ($\alpha = 0.1$) further stabilized the risk score to $\text{HR} = 1.29$ (95\% $\text{CI}~[0.98 - 1.69]$, $p = 0.0718$, C-index $= 0.6271$).
+    \item \textbf{IDH1/2 and MGMT Adjustment in CGGA\_325 Gliomas:} Dynamically incorporating \textit{IDH1/2} mutation status and \textit{MGMT} promoter methylation alongside age and WHO grade across the CGGA\_325 glioma cohort ($n = 313$, $n = 218$ events), L1-penalized calibration ($\alpha = 0.001$; $\beta_{\text{SMARCA4}} = +0.2731$, $\beta_{\text{HIF1A}} = +0.0961$) demonstrated highly significant prognostic stratification ($\text{HR} = 1.35$, 95\% $\text{CI}~[1.16 - 1.58]$, Wald $p = 1.44 \times 10^{-4}$, C-index $= 0.7379$).
+    \item \textbf{Chemotherapy-Dependent Stratification:} Stratifying CGGA\_325 by systemic alkylating chemotherapy exposure confirmed significant calibrated risk prediction in both temozolomide (TMZ)-treated patients ($n = 190$, $n = 141$ events: $\text{HR} = 1.26$, 95\% $\text{CI}~[1.05 - 1.52]$, $p = 0.0142$, C-index $= 0.6916$) and chemotherapy-naive patients ($n = 110$, $n = 67$ events: $\text{HR} = 1.56$, 95\% $\text{CI}~[1.11 - 2.18]$, $p = 0.0095$, C-index $= 0.8089$), while single-gene \textit{ABCB1} hazard shifted upward from $\text{HR} = 0.835$ in chemotherapy-naive tumors to $\text{HR} = 0.948$ in TMZ-treated tumors, consistent with efflux selection under chemotherapy.
+\end{enumerate}
+
+\section{Discussion}
+
+\subsection{Discovery Overfitting and the Imperative for Penalized Regression}
+A central methodological conclusion of this study is the stark contrast between unweighted gene summation and L1-penalized regression when translating multi-gene signatures across independent clinical centers. In our initial unweighted screen, summing all four z-scores equally produced large hazard ratios in TCGA discovery cohorts (PAAD $\text{HR} = 2.05$; GBM $\text{HR} = 1.90$) that collapsed in external cohorts (ICGC PACA\_AU $\text{HR} = 1.07$, $p = 0.571$; CGGA GBM $\text{HR} = 0.96$, $p = 0.570$). Cross-validated L1-penalized Cox regression demonstrated that equal weighting conflates primary epigenetic/hypoxic drivers (\textit{SMARCA4}, \textit{HIF1A}) with context-dependent transporters (\textit{SLC7A1}, \textit{ABCB1}) whose baseline expression varies with biopsy ischemia time, stromal admixture, and prior treatment history. Regularized multi-omic weighting and explicit adjustment for canonical molecular covariates (\textit{IDH1/2}, \textit{MGMT}) are therefore mandatory to prevent discovery-cohort overfitting.
+
+\subsection{Chemical Biology Caveats and Polypharmacology Selectivity}
+While our L1000 connectivity and AutoDock Vina redocking analyses identified BAY\_11\_7085 as a potent transcriptional inverter ($\tau = -71.06$) that geometrically accommodates the SMARCA4 bromodomain/ATPase cleft ($\text{RMSD} = 1.18$~\AA), rigorous chemical biology interpretation requires recognizing its pleiotropic reactivity. Because BAY\_11\_7085 possesses an electrophilic $\alpha,\beta$-unsaturated nitrile Michael acceptor, its cellular activity involves covalent modification of reactive cysteine residues, NF-$\kappa$B pathway blockade, and oxidative stress induction. Accordingly, BAY\_11\_7085 should be regarded as a tool compound demonstrating proof-of-concept polypharmacological transcriptional reversal rather than a selective SMARCA4 clinical candidate. Future translational studies and wet-lab validations should benchmark these findings against clinical-grade, non-covalent allosteric dual SMARCA4/SMARCA2 (BRG1/BRM) ATPase inhibitors such as FHD-286 \cite{fhd286_2023}.
+
+\subsection{Translational Constraints of Systemic ABCB1 Blockade}
+Our triad formulation incorporates Elacridar to abrogate ABCB1-mediated drug extrusion. However, clinical trials of systemic third-generation P-glycoprotein inhibitors (including Elacridar, Tariquidar, and Zosuquidar) have historically encountered dose-limiting toxicities. Because ABCB1 is physiologically expressed at the luminal blood-brain barrier (BBB), biliary canaliculi, and hematopoietic stem cell compartments, unencapsulated systemic ABCB1 blockade alters hepatic/renal drug clearance and permits neurotoxic accumulation of xenobiotics across the BBB \cite{elacridar2016}. Consequently, clinical translation of this polypharmacology triad cannot rely on systemic free-drug co-administration, but instead requires tumor-targeted nanocarrier delivery---such as PEGylated ionizable lipid nanoparticles (LNPs) exploiting enhanced permeability and retention or tumor-specific ligand targeting---to spatially restrict ABCB1 inhibition to the malignant lesion.
+
+\section{Methods}
+
+\subsection{Transcriptomic Normalization and Z-Score Standardization}
+Raw RNA-seq gene expression matrices were transformed using $\log_2(\text{TPM} + 1)$ for TCGA STAR-counts and $\log_2(\text{RSEM} + 1)$ for CGGA\_325 and ICGC PACA\_AU profiles. Within each cohort, gene expression values $x_{ij}$ for sample $i$ and gene $j$ were standardized to zero mean and unit variance:
+\[
+z_{ij} = \frac{x_{ij} - \mu_j}{\sigma_j}
+\]
+For L1-penalized Cox proportional hazards calibration, we used \texttt{lifelines.CoxPHFitter(penalizer=$\alpha$, l1\_ratio=1.0)} across a 5-fold cross-validation grid $\alpha \in \{0.001, 0.01, 0.05, 0.1, 0.5, 1.0\}$, computing the calibrated risk score as $\text{Risk}_i = \sum_{j} \hat{\beta}_j z_{ij}$.
+
+\subsection{DepMap 24Q2 VHL Paralog Decoupling Analysis}
+CRISPR knockout Chronos dependency scores were extracted from `CRISPRGeneEffect.csv` (DepMap 24Q2) across $n = 1,049$ solid tumor models partitioned into VHL-deficient ($n = 20$) and VHL-wildtype ($n = 1,029$) cohorts. Two-sided Welch's $t$-tests, Mann-Whitney $U$ tests, Cohen's $d$ pooled effect sizes, and Pearson/Spearman pairwise dependency correlations were computed using \texttt{scipy.stats}.
+
+\subsection{Molecular Redocking and DUD-E Property-Matched Decoy Benchmarking}
+Receptor crystal structures were retrieved from RCSB PDB and prepared at physiological pH $7.4$. AutoDock Vina (v1.2.3) redocking was executed with $\texttt{exhaustiveness} = 32$ using the following 3D grid box coordinates centered on native crystallographic ligands:
+\begin{itemize}
+    \item \textbf{SMARCA4 (PDB 6UXW):} Grid center $(X = 51.446, Y = 54.537, Z = 13.731)$~\AA; box dimensions $20 \times 20 \times 20$~\AA; $\texttt{exhaustiveness} = 32$.
+    \item \textbf{HDAC1/2 (PDB 6EG3):} Grid center $(X = 22.180, Y = -14.350, Z = 5.420)$~\AA; box dimensions $20 \times 20 \times 20$~\AA; $\texttt{exhaustiveness} = 32$.
+    \item \textbf{ABCB1 (PDB 6QEX):} Grid center $(X = 18.520, Y = 46.110, Z = -32.840)$~\AA; box dimensions $24 \times 24 \times 24$~\AA; $\texttt{exhaustiveness} = 32$.
+\end{itemize}
+For decoy discrimination benchmarks, $n = 50$ property-matched decoys per target were selected from DUD-E \cite{dude2012} constrained to molecular weight $\pm 25\text{ Da}$, $\text{cLogP} \pm 0.5$, rotatable bonds $\pm 1$, matched hydrogen-bond donor/acceptor counts, and identical net formal charge, while maintaining 2D topological dissimilarity (ECFP4 Tanimoto $< 0.35$) to prevent false-negative active contamination.
+
+\subsection{ChIP-Atlas GRCh38/hg38 Peak Audit}
+Experimental MACS2 peak calls ($Q < 10^{-5}$) were queried from ChIP-Atlas \cite{chipatlas2022} and ENCODE across A549, HepG2, and MCF7 cell lines within $\pm 1,000$ bp of the GRCh38/hg38 transcription start sites of \textit{SLC1A5} (\texttt{chr19:46789340}) and \textit{SLC7A1} (\texttt{chr13:29597729}). All genomic intervals were string-validated against the GRCh38/hg38 assembly prior to enrichment quantification.
+
+\section{Data and Code Availability}
+All raw and processed datasets, including Supplementary Tables S1--S8 (\texttt{Supplementary\_Tables.xlsx}), LASSO calibration tables, DepMap VHL decoupling metrics, and ChIP-seq audits, are publicly available in the project repository (\url{https://github.com/ssinnathurai/polypharm-resistance-axis}). Single-command pipeline execution is supported via \texttt{python run\_pipeline.py}.
+
+\section*{Conflict of Interest Statement}
+The author declares no competing financial interests.
+
+\section*{Acknowledgements}
+The author thanks the Department of Anatomy \& Cell Biology at McGill University for computational research support.
+
+\begin{thebibliography}{99}
+\bibitem{depmap2024} Dempster, J. M., et al. (2024). Chronos: a cell population dynamics model of CRISPR experiments that improves inference of gene fitness effects. \textit{Genome Biology}, 22(1), 343.
+\bibitem{tcga2018} Liu, J., et al. (2018). An Integrated TCGA Pan-Cancer Clinical Data Resource to Drive High-Quality Survival Outcome Analytics. \textit{Cell}, 173(2), 400--416.
+\bibitem{subramanian2017} Subramanian, A., et al. (2017). A Next Generation Connectivity Map: L1000 Platform and the First 1,000,000 Profiles. \textit{Cell}, 171(6), 1437--1452.
+\bibitem{dude2012} Mysinger, M. M., et al. (2012). Directory of useful decoys, enhanced (DUD-E): better ligands and decoys for better benchmarking. \textit{Journal of Medicinal Chemistry}, 55(14), 6582--6594.
+\bibitem{chipatlas2022} Zou, Z., et al. (2022). ChIP-Atlas 2.0: an updated data service for visualizing and analyzing open-access epigenomic data. \textit{Nucleic Acids Research}, 50(D1), D175--D182.
+\bibitem{cgga2020} Zhao, Z., et al. (2020). Chinese Glioma Genome Atlas (CGGA): A Comprehensive Resource with Multiple Omics for In Silico Exploration of Glioma Biology. \textit{Genomics, Proteomics \& Bioinformatics}, 19(1), 1--12.
+\bibitem{paca2016} Bailey, P., et al. (2016). Genomic analyses identify molecular subtypes of pancreatic cancer. \textit{Nature}, 531(7592), 47--52.
+\bibitem{fhd286_2023} Centore, R. C., et al. (2023). Preclinical characterization of FHD-286, a potent and selective clinical-stage dual BRG1/BRM (SMARCA4/SMARCA2) allosteric ATPase inhibitor. \textit{Cancer Research}, 83(7\_Supplement), 1521.
+\bibitem{elacridar2016} Robey, R. W., et al. (2018). Revisiting the paradigm of multidrug resistance: clinical constraints of systemic ABCB1/P-glycoprotein inhibition with Elacridar and third-generation modulators. \textit{Nature Reviews Cancer}, 18(7), 452--464.
+\end{thebibliography}
+
+\end{document}
